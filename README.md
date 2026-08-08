@@ -63,7 +63,7 @@ Visit `http://localhost:8000/docs` for the interactive API.
 Open `frontend/index.html` in a browser once Phase 3 starts, or serve it with
 any static server (`python -m http.server` from inside `frontend/`).
 
-## Rules for not corrupting this project
+## Development Guidelines
 
 1. **Never edit `schema.sql` directly once real data exists.** Add a numbered
    file to `database/migrations/` instead.
