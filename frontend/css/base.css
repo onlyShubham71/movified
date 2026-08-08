@@ -1,0 +1,8 @@
+/* Global resets and design tokens go here.
+   Built out in Phase 3 once the backend API is live. */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
