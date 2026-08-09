@@ -10,16 +10,15 @@ from scratch.
 
 **What Movified is:** a movie discovery app that surfaces films by emotional
 vibe — Cozy, Mind-bending, Gut-punch, Feel-good, Tense, Nostalgic — instead
-of by genre. The project was previously called Movie Mood, then went through
-several other names, before settling permanently on **Movified**.
+of by genre.
 
 **Explicit requirements given, in order:**
 
-1. Full-stack project, built from scratch, "top notch" — not another
-   half-built prototype.
+1. Full-stack project, built from scratch.
 2. Stack: **HTML, CSS, JS** (frontend) + **Python** (backend) + **MySQL**
    (database) — chosen because these were already known, not because they're
-   objectively optimal. The reasoning: zero ramp-up time means more actual
+   objectively optimal.
+   The reasoning: zero ramp-up time means more actual
    shipping. (Postgres was considered and explicitly rejected for now —
    the SQL is close enough to MySQL that switching later, if ever needed,
    is a small lift, not a rebuild.)
@@ -27,16 +26,11 @@ several other names, before settling permanently on **Movified**.
    phase proven working before moving to the next.
 4. A structure that "doesn't corrupt" while working on it or modifying it
    later.
-5. A second, unrelated project was mentioned early on — domain undecided,
-   backend/database only, nothing else specified. **Decision: shelved
-   entirely until it has an actual idea behind it.** Working on two
-   undefined things at once was identified as the same failure pattern as
-   before, just duplicated.
-6. Later, the target feature set for a movie's detail page was defined:
+5. Later, the target feature set for a movie's detail page was defined:
    poster, title, trailer (plays on open), mood tags, brief mood
    description, cast, creators, ratings from IMDb/Rotten Tomatoes, and a
    public comment section.
-7. Movie catalog growth strategy: **manual entry**, not automated import.
+6. Movie catalog growth strategy: **manual entry**, not automated import.
    TMDB auto-import was offered as an option and explicitly declined —
    mood-tagging is subjective, so manual curation was judged to be the
    product's strength, not a bottleneck to eliminate.
@@ -51,10 +45,7 @@ several other names, before settling permanently on **Movified**.
   subfolder, one file per resource) rather than one flat `main.py` — so
   adding new resources later (users, comments, ratings) means adding a new
   router file, not growing a single file indefinitely.
-- **Git from day one, with a real first commit** — this is the actual
-  mechanism behind "doesn't corrupt": every state is checkpointed and
-  recoverable. Discipline recommended going forward: commit after every
-  small working piece, not one giant commit at the end.
+- **Git from day one** — this is the actual mechanism behind "doesn't corrupt".
 - **Real, external data sources for factual movie data** (not manual entry)
   once that phase arrives:
   - **TMDB** — poster, trailer link, cast/crew, overview, genres.
@@ -160,35 +151,14 @@ movified/
 ├── docs/
 │   └── DEVLOG.md            # this file
 │
+|__LICENSE
 ├── .gitignore
 └── README.md
 ```
 
-Repo: `https://github.com/onlyShubham71/movified`
-Local path used during setup: `E:\DOWNLOADS\movified\movified`
-
 ---
 
-## 4. Setup Log — What Was Actually Done, Step by Step
-
-### GitHub connection
-
-1. Created an empty repo at github.com/new, named `movified`, with README/
-   .gitignore/license all left **unchecked** (the local repo already had a
-   commit — checking those would have created conflicting history).
-2. Linked and pushed:
-   ```
-   git remote add origin https://github.com/onlyShubham71/movified.git
-   git branch -M main
-   git push -u origin main
-   ```
-   **Snag:** the first attempt appeared to do nothing because the GitHub
-   page wasn't refreshed / the commands hadn't been run yet, not because of
-   an actual error. Confirmed working once the push output showed
-   `* [new branch] main -> main`.
-3. Connected VS Code: File → Open Folder on the existing local folder
-   (not a fresh clone), confirmed the Source Control panel recognized the
-   repo and showed the branch as `main` with a synced (cloud) icon.
+## 4. Setup Log — What Was Actually Done
 
 ### Phase 1 — Database
 
@@ -197,10 +167,6 @@ Local path used during setup: `E:\DOWNLOADS\movified\movified`
    moods.
 2. Ran `database/seed.sql` to insert 8 sample movies and their mood
    mappings.
-3. **Snag:** PowerShell doesn't support the `<` input-redirect the same way
-   Command Prompt does — running `mysql -u root -p < database/schema.sql`
-   threw `RedirectionNotSupported`.
-   **Fix:** used PowerShell's own syntax instead:
    ```
    Get-Content database\schema.sql -Raw | mysql -u root -p
    Get-Content database\seed.sql -Raw | mysql -u root -p
@@ -211,7 +177,7 @@ Local path used during setup: `E:\DOWNLOADS\movified\movified`
    SELECT COUNT(*) FROM movies;   -- returned 8
    SELECT COUNT(*) FROM moods;    -- returned 6
    ```
-   **Phase 1 status: confirmed complete.**
+        Phase 1 status: confirmed complete.
 
 ### Phase 2 — Backend
 
@@ -224,7 +190,7 @@ Local path used during setup: `E:\DOWNLOADS\movified\movified`
 3. `copy .env.example .env`, then edited `.env` to replace the placeholder
    password with the real MySQL root password.
 4. First run: `uvicorn app.main:app --reload`
-   **Snag #1:**
+   Snag #1:
    ```
    RuntimeError: 'cryptography' package is required for sha256_password
    or caching_sha2_password auth methods
@@ -235,7 +201,7 @@ Local path used during setup: `E:\DOWNLOADS\movified\movified`
    `cryptography==50.0.0` to `requirements.txt` so this doesn't recur for
    anyone else who sets the project up from the repo.
 5. Second run: `uvicorn app.main:app --reload`
-   **Snag #2:**
+   Snag #2:
    ```
    sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError)
    (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
@@ -254,13 +220,8 @@ Local path used during setup: `E:\DOWNLOADS\movified\movified`
    and actual moods (`Cozy`, `Mind-bending`, `Gut-punch`, etc.) pulled live
    from MySQL through the API.
 
-   **Separate Windows-specific snag along the way:** `cd E:\...` from a
-   `C:\` prompt in Command Prompt didn't switch drives (a classic `cd`
-   behavior on Windows — it only changes folders, not drives). Fixed with
-   `cd /d E:\path` or by switching drives first with `E:` then `cd`.
 
-   **Phase 2 status: confirmed complete — real server, real database,
-   real data, verified through the browser.**
+   Phase 2 status: confirmed complete — real server, real database, real data, verified through the browser.
 
 ### Phase 3 — Frontend
 
@@ -278,19 +239,6 @@ built.
 | Database | ✅ Complete | `SELECT COUNT(*)` returned 8 movies, 6 moods |
 | Backend | ✅ Complete | `/docs` → Execute → real JSON from live DB |
 | Frontend | ⬜ Not started | Placeholder page only |
-| Second project | ⬜ Shelved | No domain decided; intentionally parked |
 | Extended schema (cast/ratings/users/comments) | ⬜ Designed, not applied | Sitting in this log, not yet a migration file |
 
 ---
-
-## 6. What's Next
-
-1. Build the actual frontend: mood picker on the home page, a movie grid
-   that calls `GET /movies/mood/{mood_id}`, and a detail view that calls
-   `GET /movies/{movie_id}`.
-2. Once frontend is functional against the current schema, apply the
-   extended schema (Section 2) as a numbered migration and wire up
-   trailer/cast/ratings/comments — in that order, one working piece at a
-   time, each committed separately.
-3. Revisit TMDB/OMDb integration only if manual entry becomes a real
-   bottleneck, not before.
